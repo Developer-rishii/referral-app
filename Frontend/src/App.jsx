@@ -26,7 +26,7 @@ function App() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/submit", {
+      const response = await fetch("https://referral-app-backend-z035.onrender.com/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
