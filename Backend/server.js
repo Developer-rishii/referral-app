@@ -7,12 +7,32 @@ app.use(express.json());
 app.use(cors());
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => {
-    console.error("MongoDB connection error:", err);
-    process.exit(1); // Exit the app if the DB connection fails
-  });
+const connectToMongoDB = async () => {
+  try {
+    console.log("Attempting to connect to MongoDB...");
+    const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://rushikeshsawarkar14:rishi123@cluster0.bd63z.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+    console.log("MongoDB URI:", MONGO_URI);
+
+    await mongoose.connect(MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log("Connected to MongoDB successfully!");
+  } catch (err) {
+    console.error("MongoDB connection error:", err.message || err);
+    console.error("Error stack trace:", err.stack);
+
+    // Optional: Retry logic if needed
+    setTimeout(() => {
+      console.log("Retrying MongoDB connection...");
+      connectToMongoDB();
+    }, 5000); // Retry after 5 seconds
+  }
+};
+
+// Initialize connection
+connectToMongoDB();
 
 // Define the schema
 const userSchema = new mongoose.Schema({
